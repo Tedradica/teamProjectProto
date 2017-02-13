@@ -1,0 +1,93 @@
+
+<html>
+<head>
+	<title></title>
+	<!-- 제이쿼리 소스 사용법을 한번 더 확인해봅시다 ><  -->
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js?ver=1">
+		//가져오는 코드와 Jqurey소스는 분리해야한다 ????
+	</script>
+
+	<script type="text/javascript">
+	
+	var inputCode;
+	var codeType;
+
+	$(document).ready(function(){
+
+		
+
+		$("#startCode").click(function(){
+			if($('#codeType').val() == "html"){
+			
+			inputCode = $('#inputCode').val();
+
+			$('#resultCode').empty();
+			$('#resultCode').append(inputCode);
+			
+			}else{
+
+				codeType = $('#codeType').val();
+				inputCode = $('#inputCode').val();
+				//var data = "뀨";
+				// $('#resultCode').empty();
+				// $('#resultCode').append("다른코드");	
+				jQuery.ajax({
+
+                      type:"POST",
+                      url:"./"+ codeType +".php",
+                      data:{data:codeType},
+                      // dataType:"JSON", // 옵션이므로 JSON으로 받을게 아니면 안써도 됨
+                      success : function() {
+                            // 통신이 성공적으로 이루어졌을 때 이 함수를 타게 된다.
+                            // TODO
+                            //alert("ㅇㅅㅇ");
+
+                      },
+                      complete : function() {
+
+                      },
+                      error : function(xhr, status, error) {
+                            //alert("에러발생");
+                            alert("code:"+xhr.status);
+                            
+
+                      }
+                  }); //end ajax
+
+			}	//else문 end..
+
+			
+		}); //start 코드 end..
+
+	});	//document 레디 end ..
+		
+	</script>
+		
+	
+
+</head>
+<body>
+
+<table>
+
+	<tr>
+	<td style="border:1px solid black;" width="500" height="500" valign="top">
+		<textarea id="inputCode" rows="31" cols="70"></textarea>
+		codeType<select id="codeType">
+				<option value="html">HTML</option>
+				<option value="java">JAVA</option>
+				<option value="c">C</option>
+			</select>
+
+		<button id = "startCode">실행</button>
+		<a href="./compileCode.php">ㅇㅅㅇ</a>
+	</td>
+	<td style="border:1px solid black;" width="500" height="500" valign="top">
+		<div id="resultCode"></div>
+	</td>
+	<tr>
+
+</table>
+
+</body>
+</html>

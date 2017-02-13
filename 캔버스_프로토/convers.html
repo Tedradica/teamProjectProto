@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+    #drawCanvas :hover{
+      cursor:pointer;
+    }
+    </style>
+
+    <script>
+
+      $(document).ready(function (){
+        console.log("ㅇㅅㅇ");
+      });
+      
+    </script>
+
+    <script>
+    if(window.addEventListener){
+            window.addEventListener('load', InitEvent, false);
+        }
+
+        var canvas, context, tool;
+
+        var pensize, pencolor;
+
+        function InitEvent () {
+            // Canvas 객체를 탐색 한다.
+            canvas = document.getElementById('drawCanvas');
+            if (!canvas) {
+              alert('캔버스 객체를 찾을 수 없음');
+              return;
+            }
+
+            if (!canvas.getContext) {
+              alert(' Drawing Contextf를 찾을 수 없음');
+              return;
+            }
+
+            // 2D canvas context를 가져 온다.
+            context = canvas.getContext('2d');
+            if (!context) {
+              alert('getContext() 함수를 호출 할 수 없음');
+              return;
+            }
+
+            // tool_pencil 함수의 인스턴스를 생성 한다.
+            tool = new tool_pencil();
+
+            // Canvas에 mousedown, mousemove, mouseup 이벤트 리스너를 추가한다.
+            canvas.addEventListener('mousedown', ev_canvas, false);
+            canvas.addEventListener('mousemove', ev_canvas, false);
+            canvas.addEventListener('mouseup',   ev_canvas, false);
+        }
+
+        // 마우스 이동을 추적 하여 그리기 작업을 수행 한다.
+        function tool_pencil () {
+            var tool = this;
+            this.started = false;
+
+            // 마우스를 누를때 그리기 작업을 시작 한다.
+            this.mousedown = function (ev) {
+                context.lineWidth = pensize;
+                context.strokeStyle = pencolor;
+                context.beginPath();
+                context.moveTo(ev._x, ev._y);
+                tool.started = true;
+            };
+
+            // 마우스가 이동 할때(mousemove) 마다 호출 된다.
+            this.mousemove = function (ev) {
+                if (tool.started)
+                {
+                    context.lineTo(ev._x, ev._y);
+                    context.stroke();
+                }
+            };
+
+            // 마우스 좌측 버튼을 놓았을때(mouseup) 호출 된다.
+            this.mouseup = function (ev) {
+              if (tool.started) {
+                    tool.mousemove(ev);
+                    tool.started = false;
+              }
+            };
+        }
+
+
+        // Canvas요소 내의 좌표를 결정 한다.
+        function ev_canvas (ev){
+            console.log(ev);
+            //크롬의 경우 둘다 지원..
+            if (ev.layerX || ev.layerX == 0) {
+              // Firefox 브라우저
+              ev._x = ev.layerX;
+              ev._y = ev.layerY;
+            }
+            else if (ev.offsetX || ev.offsetX == 0) {
+              // Opera 브라우저
+              ev._x = ev.offsetX;
+              ev._y = ev.offsetY;
+            }
+
+            // tool의 이벤트 핸들러를 호출한다.
+            var func = tool[ev.type];
+
+            if (func) {
+                func(ev);
+            }
+        }
+
+function canvasClear(){
+  console.log("초기화");
+  context.fillStyle = "white";
+  context.fillRect(0, 0, 800, 600);
+
+}
+function penSize(value){
+  //사용자에게 입력받은 값으로 펜 크기를 바꿈
+  pensize = value;
+
+}
+
+function penColor(value){
+  //사용자에게 입력받은 값으로 펜 색상을 바꿈
+  pencolor = value;
+
+}
+
+
+
+    </script>
+
+    <style>
+      #canvas{
+        border-style: solid;
+        border-color: black;
+        border-width: 3px;
+      }
+    </style>
+
+  </head>
+  <body>
+<div id="container">
+      <canvas id="drawCanvas" width="800" height="600" style=" position: relative; border: 1px solid #000; cursor:default;
+;"></canvas>
+</div>
+
+펜크기<select onchange ="penSize(value)">
+  <option value="1">가늘게</option>
+  <option value="5">조금굵게</option>
+  <option value="15">아주굵게</option>
+</select>
+
+펜색상<select onchange ="penColor(value)">
+  <option value="Black">Black(기본)</option>
+  <option value="White">White(흰색)</option>
+  <option value="Red">Red(강조)</option>
+</select>
+
+<button onclick="canvasClear();">모두지우기</button>
+
+<button type="button" id="download">Download</button>
+
+  </body>
+</html>
